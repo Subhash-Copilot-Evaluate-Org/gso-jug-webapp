@@ -39,37 +39,23 @@ jobs:
       JIRA_ISSUE: ${{ github.event.client_payload.jira_issue || inputs.jira_issue }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
-          node-version: '20'
+          fetch-depth: 0
 
-      - name: Install GitHub Copilot CLI
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v4
+
+      - name: Install Copilot CLI
         run: npm install -g copilot
 
-      # - name: Authenticate Copilot CLI
-      #   run: gh auth login --with-token <<< "${{ secrets.COPILOT_CLI_TOKEN }}"
-      #   env:
-      #     GH_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
-
-      - name: Run Copilot prompt
-        id: copilot
-        run: |
-          echo "Prompt: $PROMPT"
-          copilot suggest "$PROMPT" 
+      - name: Run Copilot CLI
         env:
-          GH_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
-
-      - name: Comment on JIRA issue
-        if: ${{ env.JIRA_ISSUE != '' }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
-          OUTPUT=$(cat copilot_output.txt)
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          curl --silent --fail \
-            --request POST \
+          copilot -p "Review the git log for this repository and write a bullet point summary of all code changes that were made today, with links to the relevant commit on GitHub. Above the bullet list give a description (max 100 words) summarizing the changes made. Write the details to summary.md" --allow-tool='shell(git:*)' --allow-tool=write --no-ask-user
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
             --url "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${JIRA_ISSUE}/comment" \
             --header "Authorization: Basic ${{ secrets.JIRA_API_TOKEN }}" \
             --header "Content-Type: application/json" \
