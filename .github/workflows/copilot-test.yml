@@ -48,7 +48,7 @@ jobs:
           node-version: '20'
 
       - name: Install GitHub Copilot CLI
-        run: npm install -g @github/copilot-cli
+        run: npm install -g copilot
 
       - name: Authenticate Copilot CLI
         run: gh auth login --with-token <<< "${{ secrets.COPILOT_CLI_TOKEN }}"
