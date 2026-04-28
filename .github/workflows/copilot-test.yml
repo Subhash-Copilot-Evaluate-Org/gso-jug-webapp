@@ -59,7 +59,7 @@ jobs:
         id: copilot
         run: |
           echo "Prompt: $PROMPT"
-          gh copilot suggest "$PROMPT" | tee copilot_output.txt
+          copilot suggest "$PROMPT" 
         env:
           GH_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
 
