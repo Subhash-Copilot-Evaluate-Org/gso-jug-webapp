@@ -44,14 +44,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js environment
-        run: |
-          nvm install 22
-          nvm use 22
-          node -v
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6.4.0
 
       - name: Install Copilot CLI
-        run: npm install -g copilot
+        run: |
+          node -v
+          npm install -g copilot
 
       - name: Run Copilot CLI
         env:
