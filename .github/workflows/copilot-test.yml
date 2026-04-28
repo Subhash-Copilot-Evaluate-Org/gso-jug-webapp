@@ -1,0 +1,76 @@
+name: Copilot Prompt - JIRA Webhook Trigger
+
+# Triggered via JIRA webhook using the repository_dispatch event.
+# Configure your JIRA automation to POST to:
+#   https://api.github.com/repos/<owner>/<repo>/dispatches
+# with a payload like:
+#   {
+#     "event_type": "jira-copilot-prompt",
+#     "client_payload": {
+#       "prompt": "As a mortgage broker I want to search policies by loan ID",
+#       "jira_issue": "ALMI-123"
+#     }
+#   }
+
+on:
+  repository_dispatch:
+    types:
+      - jira-copilot-prompt
+
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Prompt to send to GitHub Copilot'
+        required: true
+      jira_issue:
+        description: 'JIRA issue key (e.g. ALMI-123)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  run-copilot-prompt:
+    name: Run Copilot Prompt
+    runs-on: ubuntu-latest
+
+    env:
+      PROMPT: ${{ github.event.client_payload.prompt || inputs.prompt }}
+      JIRA_ISSUE: ${{ github.event.client_payload.jira_issue || inputs.jira_issue }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install GitHub Copilot CLI
+        run: npm install -g @github/copilot-cli
+
+      - name: Authenticate Copilot CLI
+        run: gh auth login --with-token <<< "${{ secrets.COPILOT_CLI_TOKEN }}"
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+
+      - name: Run Copilot prompt
+        id: copilot
+        run: |
+          echo "Prompt: $PROMPT"
+          gh copilot suggest "$PROMPT" | tee copilot_output.txt
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+
+      - name: Comment on JIRA issue
+        if: ${{ env.JIRA_ISSUE != '' }}
+        run: |
+          OUTPUT=$(cat copilot_output.txt)
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl --silent --fail \
+            --request POST \
+            --url "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${JIRA_ISSUE}/comment" \
+            --header "Authorization: Basic ${{ secrets.JIRA_API_TOKEN }}" \
+            --header "Content-Type: application/json" \
+            --data "{\"body\":{\"type\":\"doc\",\"version\":1,\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Copilot response:\\n${OUTPUT}\\n\\nWorkflow run: ${RUN_URL}\"}]}]}}"
