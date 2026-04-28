@@ -58,4 +58,4 @@ jobs:
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
-          copilot -p ${{ github.event.client_payload.prompt || inputs.prompt }}
+          copilot -p \"${{ github.event.client_payload.prompt || inputs.prompt }}\"
