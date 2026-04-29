@@ -39,10 +39,10 @@ jobs:
       JIRA_ISSUE: ${{ github.event.client_payload.jira_issue || inputs.jira_issue }}
 
     steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v6
-      #   with:
-      #     fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       # - name: Setup Node.js environment
       #   uses: actions/setup-node@v6.4.0
