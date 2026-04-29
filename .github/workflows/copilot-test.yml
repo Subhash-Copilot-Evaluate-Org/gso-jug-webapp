@@ -68,4 +68,5 @@ jobs:
           gh issue create \
             --title "Run architecture review" \
             --body "@copilot run architecture validation on latest code"
+          gh issue edit 3 --add-assignee copilot-swe-agent[bot]          
           
