@@ -55,18 +55,20 @@ jobs:
       #     node -v
       #     npm install -g copilot
 
-      # - name: Run Copilot CLI
-      #   env:
-      #     COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-      #   run: |
-      #     copilot -p "${{ github.event.client_payload.prompt || inputs.prompt }}  for the JIRA issue ${{ github.event.client_payload.jira_issue }} "
-      - name: Create issue to trigger agent
+      - name: Run Copilot CLI
         env:
-           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-           GH_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
-          gh issue create \
-            --title "Run architecture review" \
-            --body "@copilot run architecture validation on latest code"
-          gh issue edit 3 --add-assignee copilot-swe-agent[bot]          
+          copilot -p "/speckit.specify  create Opinion Poll feature on the website "
+          # copilot -p "/speckit.specify ${{ github.event.client_payload.prompt || inputs.prompt }}  for the JIRA issue ${{ github.event.client_payload.jira_issue }} "
+
+      # - name: Create issue to trigger agent
+      #   env:
+      #      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+      #      GH_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+      #   run: |
+      #     gh issue create \
+      #       --title "Run architecture review" \
+      #       --body "@copilot run architecture validation on latest code"
+      #     gh issue edit 3 --add-assignee copilot-swe-agent[bot]          
           
