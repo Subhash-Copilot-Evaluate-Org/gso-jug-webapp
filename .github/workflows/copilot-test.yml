@@ -28,6 +28,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   run-copilot-prompt:
