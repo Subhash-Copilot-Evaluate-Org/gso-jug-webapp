@@ -60,7 +60,7 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
           sudo chmod -R 777 "$GITHUB_WORKSPACE"
-          copilot --allow-tool=write --allow-tool='shell(git:*)'  -p "/speckit.specify  create Opinion Poll feature on the website "
+          copilot --allow-tool=write --allow-tool='shell(*)'  -p "/speckit.specify  create Opinion Poll feature on the website. At the end of the session, Make sure to push the branch up the github. This is NON NEGOTIABLE "
           # copilot -p "/speckit.specify ${{ github.event.client_payload.prompt || inputs.prompt }}  for the JIRA issue ${{ github.event.client_payload.jira_issue }} "
 
       # - name: Create issue to trigger agent
