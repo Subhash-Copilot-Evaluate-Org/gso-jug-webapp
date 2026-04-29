@@ -39,20 +39,20 @@ jobs:
       JIRA_ISSUE: ${{ github.event.client_payload.jira_issue || inputs.jira_issue }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+      # - name: Checkout
+      #   uses: actions/checkout@v6
+      #   with:
+      #     fetch-depth: 0
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v6.4.0
-        with:
-          node-version: '22'
+      # - name: Setup Node.js environment
+      #   uses: actions/setup-node@v6.4.0
+      #   with:
+      #     node-version: '22'
 
-      - name: Install Copilot CLI
-        run: |
-          node -v
-          npm install -g copilot
+      # - name: Install Copilot CLI
+      #   run: |
+      #     node -v
+      #     npm install -g copilot
 
       # - name: Run Copilot CLI
       #   env:
@@ -60,6 +60,9 @@ jobs:
       #   run: |
       #     copilot -p "${{ github.event.client_payload.prompt || inputs.prompt }}  for the JIRA issue ${{ github.event.client_payload.jira_issue }} "
       - name: Create issue to trigger agent
+        env:
+           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+           GH_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
           gh issue create \
             --title "Run architecture review" \
