@@ -59,6 +59,7 @@ jobs:
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
+          sudo chmod -R 777 "$GITHUB_WORKSPACE"
           copilot -p "/speckit.specify  create Opinion Poll feature on the website "
           # copilot -p "/speckit.specify ${{ github.event.client_payload.prompt || inputs.prompt }}  for the JIRA issue ${{ github.event.client_payload.jira_issue }} "
 
