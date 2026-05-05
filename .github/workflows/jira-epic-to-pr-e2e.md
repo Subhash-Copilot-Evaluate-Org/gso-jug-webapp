@@ -16,16 +16,33 @@ permissions:
   pull-requests: read
 
 safe-outputs:
-  push-to-pull-request-branch:
-    target: "*"                 # "triggering" (default), "*", or number    
-    max: 3                      # max pushes per run (default: 1)
-    if-no-changes: "warn"       # "warn" (default), "error", or "ignore"
-    excluded-files:               # files to omit from the patch entirely
-      - "**/*.lock"    
-    fallback-as-pull-request: true        # on non-fast-forward failure, create fallback PR to original PR branch (default: true)
-    ignore-missing-branch-failure: false  # treat deleted/missing branch errors as skipped instead of failed (default: false)
-    protected-files: fallback-to-issue  # create review issue if protected files modified
-    target-repo: "Subhash-Copilot-Evaluate-Org/gso-jug-webapp"    # cross-repository (target repo must be checked out)
+    create-pull-request:        
+        draft: true                   # create as draft — enforced as policy (default: true)
+        max: 3                        # max PRs per run (default: 1)
+        expires: 14                   # auto-close after 14 days (same-repo only)
+        if-no-changes: "warn"         # "warn" (default), "error", or "ignore"
+        target-repo: "Subhash-Copilot-Evaluate-Org/gso-jug-webapp"     # cross-repository
+        base-branch: "master"          # target branch for PR (default: github.base_ref || github.ref_name)
+        allowed-base-branches:        # allow agent to override base branch at runtime (glob patterns)
+        - master
+        - release/*
+        fallback-as-issue: true      # disable issue fallback (default: true)
+        auto-close-issue: false       # don't auto-add "Fixes #N" to PR description (default: true)
+        preserve-branch-name: true    # omit random salt suffix from branch name (default: false)
+        excluded-files:               # files to omit from the patch entirely
+        - "**/*.lock"
+        - "dist/**"
+
+    push-to-pull-request-branch:
+        target: "*"                 # "triggering" (default), "*", or number    
+        max: 3                      # max pushes per run (default: 1)
+        if-no-changes: "warn"       # "warn" (default), "error", or "ignore"
+        excluded-files:               # files to omit from the patch entirely
+        - "**/*.lock"    
+        fallback-as-pull-request: true        # on non-fast-forward failure, create fallback PR to original PR branch (default: true)
+        ignore-missing-branch-failure: false  # treat deleted/missing branch errors as skipped instead of failed (default: false)
+        protected-files: fallback-to-issue  # create review issue if protected files modified
+        target-repo: "Subhash-Copilot-Evaluate-Org/gso-jug-webapp"    # cross-repository (target repo must be checked out)
 
 
 tools:
@@ -54,11 +71,11 @@ Use the speckit.specify agent to generate user stories based on the content of t
 
 ``` /speckit.specify *** JIRA Content from Step-1 *** ```
 
-The output from the speckit.specify agent should be a list of user stories that are derived from the original JIRA issue, ready to be added back into JIRA or used for further planning and development activities. This output is typically generated in spec.md file as a result of the speckit.specify agent execution.
+The output from the speckit.specify agent should be a list of user stories that are derived from the original JIRA issue, ready to be added back into JIRA or used for further planning and development activities. This output is typically generated in spec.md file as a result of the speckit.specify agent execution. Create the Pull Request branch for the generated user stories in the Github repository. The branch name should be the git branch created during the speckit.specify agent execution in Step-2.
 
 # Step-3: Git Push to create feature PR branch created in Step-2 by the specify agent up in to Github repository.
 
-After running the speckit.specify agent in Step-2, it would have resulted in creation of a feature branch. Do a Git push or this feature branch in to the Github repository. This will ensure that the generated user stories and any related changes are properly version controlled and can be easily accessed by the development team for further work. The Git push should be done in a way that it does not create a pull request automatically, as the main goal here is to have the generated content available in the repository for reference and use in JIRA, rather than immediately merging it into the main codebase.
+After running the speckit.specify agent in Step-2, it would have resulted in creation of a feature branch in github. The next step is to push that branch to the remote repository in Github. This will create a new pull request branch in Github with the changes made by the speckit.specify agent, which includes the generated user stories in the spec.md file. This pull request can then be reviewed and merged by the development team as part of their workflow.
 
 # Step-4: Use the generated spec.md file to create user stories in JIRA
 
