@@ -32,6 +32,9 @@
             <a class="nav-link" href="/raffle-main">Raffle</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="/poll">Poll</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/location">Location</a>
           </li>
           <li class="nav-item">
@@ -62,6 +65,9 @@
           </li>-->
           <li class="nav-item">
             <a class="nav-link" href="/raffle-main">Raffle</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/poll">Poll</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/location">Location</a>
